@@ -35,6 +35,21 @@ The cURL request had the following options:
 - CURLOPT_POSTFIELDS = fieldsString
 ###
 
+addCompleteListener = ( requestStream ) ->
+	responseData = ''
+
+	appendData = ( chunk ) -> responseData += chunk
+
+	emitData = ( response ) ->
+		parsedResponseData = if responseData? then (try JSON.parse responseData catch e then null) else null
+		requestStream.emit 'responseComplete', parsedResponseData, response, responseData
+
+	requestStream.on 'response', ( response ) ->
+		response.on 'data', appendData
+		response.on 'end', -> emitData response
+
+	requestStream
+
 module.exports = class Aries
 	# Confusingly, this is actually the api 'user' name. (app name.)
 	key: null
@@ -51,7 +66,8 @@ module.exports = class Aries
 		# return the request object so controlling code can handle the response,
 		# which is done by listening for the 'response' event.
 		# See: https://nodejs.org/api/http.html#http_event_response
-		@execRequest url, postData
+		request = @execRequest url, postData
+		addCompleteListener request
 
 	getPostData: ( data ) ->
 		fields =

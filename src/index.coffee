@@ -1,22 +1,5 @@
 ###
 A sort of straight port of the Aries PHP class.
-
-The way it is called is basically the same, but the response is handled nodishly.
-	api = new Aries appName, appSecret
-	request = api.exec "minecraft", "readconsole"
-	request.on 'response', ( response ) ->
-		responseData = ''
-
-		response.on 'data', ( chunk ) ->
-			responseData += chunk
-
-		# the 'end' event probably works, too.
-		response.on 'close', () ->
-			handleResponseData responseData
-
-or slightly more succinctly
-	api.exec( "minecraft", "readconsole" ).on 'response', ( response ) ->
-		...
 ###
 
 https = require 'https'
@@ -35,14 +18,14 @@ The cURL request had the following options:
 - CURLOPT_POSTFIELDS = fieldsString
 ###
 
-addCompleteListener = ( requestStream ) ->
-	responseData = ''
+addCompleteListener = ( requestStream, listenerCallback ) ->
+	rawResponseData = ''
 
-	appendData = ( chunk ) -> responseData += chunk
+	appendData = ( chunk ) -> rawResponseData += chunk
 
 	emitData = ( response ) ->
-		parsedResponseData = if responseData? then (try JSON.parse responseData catch e then null) else null
-		requestStream.emit 'responseComplete', parsedResponseData, response, responseData
+		responseData = if rawResponseData? then (try JSON.parse rawResponseData catch e then null) else null
+		listenerCallback responseData, response, rawResponseData
 
 	requestStream.on 'response', ( response ) ->
 		response.on 'data', appendData
@@ -51,7 +34,6 @@ addCompleteListener = ( requestStream ) ->
 	requestStream
 
 module.exports = class Aries
-	# Confusingly, this is actually the api 'user' name. (app name.)
 	key: null
 	secret: null
 
@@ -59,15 +41,15 @@ module.exports = class Aries
 		# Nothing else, really...
 
 	# PHP arrays most closely resemble JS objects.
-	exec: ( service, command, data = {} ) ->
+	exec: ( service, command, data = {}, callback = null ) ->
+		if typeof data is 'function'
+			callback = data
+			data = {}
+
 		postData = @getPostData data
 		url = @getPostRequestOptions service, command, postData
-
-		# return the request object so controlling code can handle the response,
-		# which is done by listening for the 'response' event.
-		# See: https://nodejs.org/api/http.html#http_event_response
 		request = @execRequest url, postData
-		addCompleteListener request
+		if callback? then addCompleteListener request, callback else request
 
 	getPostData: ( data ) ->
 		fields =

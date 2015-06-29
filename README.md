@@ -1,6 +1,8 @@
 CreeperHost Aries API for Node JS
 =================================
 
+> Note: Due to not actually setting the version to 0 before publishing, the 1.x versions are being treated as the unstable version.  Sorry about that.
+
 This is a simple port of [CreeperHost][1]'s [Aries API][2] to Node JS or IO JS.  It's useful if you're writing a Node based CreeperHost frontend or [NW.js][4] app.
 
 Note that the Aries API is a low level API, and should probably be wrapped by a helper.

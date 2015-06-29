@@ -66,9 +66,7 @@ module.exports = class Aries
 	getPostRequestOptions: ( service, command, postData ) ->
 		method: 'POST'
 		hostname: "api.creeperhost.net"
-		# hostname: 'httpbin.org'
 		path: '/' + [ service, command ].join( '/' )
-		# path: '/post'
 		headers:
 			'Content-Type': 'application/x-www-form-urlencoded'
 			'Content-Length': Buffer.byteLength postData, 'utf8'

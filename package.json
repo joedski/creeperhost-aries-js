@@ -3,6 +3,13 @@
   "version": "1.1.0",
   "description": "Node JS port of CreeperHost's Aries API.",
   "main": "lib/index.js",
+  "bugs": {
+    "url": "https://github.com/joedski/creeperhost-aries-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joedski/creeperhost-aries-js.git"
+  },
   "scripts": {
     "test": "cake build"
   },

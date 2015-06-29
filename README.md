@@ -38,12 +38,8 @@ For convenience, an extra event will be emitted by the `ClientRequest` returned 
 var Aries = require( 'creeperhost-aries' );
 var api = new Aries( appKey, appSecret );
 
-function getConsole( callback ) {
-	// using the convenience event 'responseComplete' rather than the built-in node events.
-	api.exec( 'minecraft', 'readconsole' ).on( 'responseComplete', callback );
-}
-
-getConsole( function( parsedResponse, responseStream, rawResponse ) {
+// using the convenience event 'responseComplete' rather than the built-in node events.
+api.exec( 'minecraft', 'readconsole' ).on( 'responseComplete', function( parsedResponse, responseStream, rawResponse ) {
 	if( responseStream.statusCode !== 200 ) {
 		console.warn( "Server returned non-OK status!", "Status code was", responseStream.statusCode );
 		return;

@@ -3,6 +3,8 @@ CreeperHost Aries API for Node JS
 
 This is a simple port of [CreeperHost][1]'s [Aries API][2] to Node JS or IO JS.  It's useful if you're writing a Node based CreeperHost frontend or [NW.js][4] app.
 
+Note that the Aries API is a low level API, and should probably be wrapped by a helper.
+
 
 
 Usage
@@ -10,7 +12,7 @@ Usage
 
 > Note: Due to CORS headers, this cannot be used in the browser unless CreeperHost themselves allow any source to pull such content.
 
-Basic usage is largely similar to their normal API, but dealing with the response is Nodish and async, using Node's own http module rather than cURL.
+Basic usage is largely similar to their normal API, but dealing with the response is Nodish and async, using Node's own `https` module rather than cURL.
 
 ### Class: Aries
 
@@ -44,6 +46,24 @@ function getConsole( callback ) {
 		response.on( 'end', returnData );
 	});
 }
+
+getConsole( function( error, rawResponse ) {
+	if( error ) {
+		console.error( error );
+		return;
+	}
+
+	try {
+		response = JSON.parse( rawResponse );
+
+		if( response.status == 'success' ) {
+			console.log( response );
+		}
+		else {
+			console.warn( response.message );
+		}
+	}
+});
 ```
 
 

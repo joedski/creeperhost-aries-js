@@ -1,6 +1,6 @@
 {
   "name": "creeperhost-aries",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Node JS port of CreeperHost's Aries API.",
   "main": "lib/index.js",
   "scripts": {

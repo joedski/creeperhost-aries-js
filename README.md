@@ -20,19 +20,13 @@ Basic usage is largely similar to their normal API, but dealing with the respons
 
 Methods:
 
-- `exec( section :String, command :String ) :http.ClientRequest`
+- `exec( section :String, command :String, data :Object = {}, [ callback :Function ] ) :http.ClientRequest`
 	- Generates a request and sends it to CreeperHost's server, returning the request object so you can listen to it.  For the most part, you'll just listen for a 'response' event, though you should probably handle timeouts and such as well.
-
-There are some other helper methods, but they are not so useful in isolation.
-
-### Additional Events on the Request object
-
-For convenience, an extra event will be emitted by the `ClientRequest` returned from `#exec`, the event being named `responseComplete`.
-
-- `responseComplete ( parsedResponse :Object | Null, responseStream :http.IncomingMessage, rawResponse :String )`
-	- `parsedResponse` - If the response is formatted as JSON, this will be the object parsed from that formatted string, otherwise it will be `null`.
-	- `responseStream` - This is the message stream representing the response from CreeperHost's server.  It is useful for checking the response statusCode among other things, although is probably safely ignored most of the time.
-	- `rawResponse` - The raw body recieved through this response.  Probably not useful most of the time.
+	- If a callback is passed as the last argument then exec will automatically listen for the response to arrive, slurp the data together, and call the callback with that response and its data in the following form:
+		- `callback( parsedResponse :Object | Null, responseStream :http.IncomingMessage, rawResponse :String )`
+			- `parsedResponse` - If the response is formatted as JSON, this will be the object parsed from that formatted string, otherwise it will be `null`.
+			- `responseStream` - This is the message stream representing the response from CreeperHost's server.  It is useful for checking the response statusCode among other things, although is probably safely ignored most of the time.
+			- `rawResponse` - The raw body recieved through this response.  Probably not useful most of the time.
 
 ### Example Use
 
@@ -41,7 +35,7 @@ var Aries = require( 'creeperhost-aries' );
 var api = new Aries( appKey, appSecret );
 
 // using the convenience event 'responseComplete' rather than the built-in node events.
-api.exec( 'minecraft', 'readconsole' ).on( 'responseComplete', function( parsedResponse, responseStream, rawResponse ) {
+api.exec( 'minecraft', 'readconsole', function( parsedResponse, responseStream, rawResponse ) {
 	if( responseStream.statusCode !== 200 ) {
 		console.warn( "Server returned non-OK status!", "Status code was", responseStream.statusCode );
 		return;

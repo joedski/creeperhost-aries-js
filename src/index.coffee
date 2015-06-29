@@ -73,11 +73,7 @@ module.exports = class Aries
 		rejectUnauthorized: false # covers CURLOPT_SSL_VERIFYPEER and CURLOPT_SSL_VERIFYHOST.
 
 	execRequest: ( urlOpts, postData ) ->
-		url = require 'url'
-		console.log( 'urlOpts:', urlOpts )
-		console.log( 'urlOpts formatted:', url.format( urlOpts ) )
-		console.log( 'postData:', postData )
-		# request = https.request urlOpts
-		# request.write postData
-		# request.end()
-		# request
+		request = https.request urlOpts
+		request.write postData
+		request.end()
+		request

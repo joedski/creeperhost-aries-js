@@ -19,7 +19,7 @@ or slightly more succinctly
 		...
 ###
 
-http = require 'http'
+https = require 'https'
 
 # The CH Aries API uses PHP's urlencode function, so I'm going to assume their backend expucts its exact behavior.
 urlencode = require '../phpjs/urlencode'
@@ -57,23 +57,27 @@ module.exports = class Aries
 		fields =
 			key: @key
 			secret: @secret
-			data: JSON.stringify @data
+
+		if data? then fields.data = JSON.stringify data
 
 		# TODO: There's probably a better way to do this, but for now I'm explicitly following the exact same method as their PHP implementation.
 		("#{ name }=#{ urlencode value }" for name, value of fields).join '&'
 
 	getPostRequestOptions: ( service, command, postData ) ->
 		method: 'POST'
-		protocol: "https:"
-		host: "api.creeperhost.net"
-		pathname: [ service, command ].join( '/' )
+		hostname: "api.creeperhost.net"
+		pathname: '/' + [ service, command ].join( '/' )
 		headers:
 			'Content-Type': 'application/x-www-form-urlencoded'
 			'Content-Length': Buffer.byteLength postData, 'utf8'
 		rejectUnauthorized: false # covers CURLOPT_SSL_VERIFYPEER and CURLOPT_SSL_VERIFYHOST.
 
 	execRequest: ( urlOpts, postData ) ->
-		request = http.request urlOpts
-		request.write postData
-		request.end()
-		request
+		url = require 'url'
+		console.log( 'urlOpts:', urlOpts )
+		console.log( 'urlOpts formatted:', url.format( urlOpts ) )
+		console.log( 'postData:', postData )
+		# request = https.request urlOpts
+		# request.write postData
+		# request.end()
+		# request

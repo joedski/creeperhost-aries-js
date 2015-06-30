@@ -34,7 +34,6 @@ Methods:
 var Aries = require( 'creeperhost-aries' );
 var api = new Aries( appKey, appSecret );
 
-// using the convenience event 'responseComplete' rather than the built-in node events.
 api.exec( 'minecraft', 'readconsole', function( parsedResponse, responseStream, rawResponse ) {
 	if( responseStream.statusCode !== 200 ) {
 		console.warn( "Server returned non-OK status!", "Status code was", responseStream.statusCode );
@@ -47,6 +46,7 @@ api.exec( 'minecraft', 'readconsole', function( parsedResponse, responseStream, 
 		return;
 	}
 
+	// JSON returned by readconsole has a 'log' property which has the current console log.
 	console.log( parsedResponse.log );
 });
 ```

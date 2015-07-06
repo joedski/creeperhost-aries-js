@@ -53,6 +53,13 @@ api.exec( 'minecraft', 'readconsole', function( parsedResponse, responseStream, 
 
 
 
+Summary of Available API Commands
+---------------------------------
+
+The available commands can be found in the [API Command Reference](API_COMMAND_REFERENCE.md).
+
+
+
 Legal
 -----
 
@@ -70,3 +77,5 @@ See [LISCENSE](LISCENSE) for the text of the ISC Liscense which governs the code
 [2]: https://github.com/lesander/creeperhost-api
 [3]: http://phpjs.org/
 [4]: https://github.com/nwjs/nw.js/
+[php example]: https://cp.creeperhost.net/Aries/
+[ch wiki]: http://wiki.creeperlabs.com/index.php/ElasticCreeper_API

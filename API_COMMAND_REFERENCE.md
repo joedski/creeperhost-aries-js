@@ -1,0 +1,138 @@
+Available API Commands
+======================
+
+API commands are organized hierachically, with each Command working only in its parent Section.
+
+This may be out of date by the time you use it.  I have no idea of the stability of CH's Aries API.  Most of this information is pulled from [their wiki summary of the API][ch wiki] and their [PHP example][php example].  If things in reality are not as they seem here, you may have to search for the most up to date documentation via CreeperHost's docs or via your favourite search engine.
+
+- Section `minecraft` (also usable as `mc`)
+	- Command `readconsole` reads the current console log of the Minecraft Server.
+		- Data object takes no additional properties for this command.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the server log was successfully retrieved.
+				- `"error"` indicating there was an issue retrieving the server log.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- `log` String with the current Minecraft Server Console log, containing the last 500 or less lines.
+				- `count` Number indicating how many lines `log` contains
+				- `debug` No idea, but usually `0`.
+	- Command `writeconsole` sends a command to the Minecraft Server's console.
+		- Data object can have the following properties:
+			- `command` String with the command line to execute.  Commands do not have slashes in the server console because you can't say things without explicitly using the `say` server command.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the command was sent to the server without a hitch. (Does not indicate the command itself executed in the server without error, only that it made it to the server.)
+				- `"error"` indicating there was an error sending the command to the server.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- ..?
+	- Command `startserver`
+	- Command `restartserver`
+	- Command `stopserver`
+- Section `os`
+	- Command `getram`
+		- Data object takes no additional properties for this command.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the server log was successfully retrieved.
+				- `"error"` indicating there was an issue retrieving the server log.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- ..?
+	- Command `getcpu`
+		- Data object takes no additional properties for this command.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the server log was successfully retrieved.
+				- `"error"` indicating there was an issue retrieving the server log.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- ..?
+	- Command `gethdd`
+		- Data object takes no additional properties for this command.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the server log was successfully retrieved.
+				- `"error"` indicating there was an issue retrieving the server log.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- ..?
+- Section `billing` (Note: Currently the only real info I found on this section is in their [PHP example][php example].  It may be that this section is in flux, more so than the others.)
+	- Command `spinupMinigame` tries to download (using wget) and subsequently start up a minigame you specify on CreeperHost's cloud.
+		- Data object can have the following properties:
+			- `game` String indicating what game type this is.  In this case, it's (always?) `"custom"`.
+			- `ram` Number indicating how many gigabytes of ram to allot to the game.
+			- `time` Number indicating how many hours the game should be run for.
+			- `custom` String, a URL to a minigame zip archive that can be downloaded using wget.
+			- `callback` Optional string, an URL accessible via plain HTTP that CreeperHost's API will send a request to with the UUID if the minigame is successfully started.  the UUID is appended to the end of the string provided, so if you pass `http://example.com/game-started?uuid=` CreeperHost's API will try to send a request to `http://example.com/game-started?uuid={UUID_HERE}`.  Note it does not matter if it is a URL with `uuid` param at the end or anything else, the UUID will be appended to the end regardless.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the server log was successfully retrieved.
+				- `"error"` indicating there was an issue retrieving the server log.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- `uuid` String containing the UUID of the minigame that was spun up.  This is used for adding time extensions and for spinning down the game when you're done with it.
+				- ..?
+	- Command `spindownMinigame` Stops the specified minigame, causing a partial refund for how much time was not used.
+		- Data object can have the following properties:
+			- `uuid` String containing the UUID returned by the `spinupMinigame` command.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the server log was successfully retrieved.
+				- `"error"` indicating there was an issue retrieving the server log.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- ..?
+	- Command `extendMinigame` Adds another hour to the specified minigame's time.
+		- Data object can have the following properties:
+			- `uuid` String containing the UUID returned by the `spinupMinigame` command.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the server log was successfully retrieved.
+				- `"error"` indicating there was an issue retrieving the server log.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- ..?
+	- Command `timerMinigame` Gets the seconds of run time remaining for the specified minigame.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the server log was successfully retrieved.
+				- `"error"` indicating there was an issue retrieving the server log.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- ..? (A number indicating how many seconds of run time the minigame has left.  Property name?)
+	- Command `listMinigames` Lists the minigames you currently have active, if any.
+		- Data object takes no additional properties for this command.
+		- The JSON response will have:
+			- `status` String indicating whether or not the console read succeeded.  Possible values include:
+				- `"success"` indicating that the server log was successfully retrieved.
+				- `"error"` indicating there was an issue retrieving the server log.
+			- Additional properties if `status` is `"error"`:
+				- `message` String, a message giving details on the reason for that non-success status.
+			- Additional properties if `status` is `"success"`:
+				- ..? (Presumably a list of games running, or empty list if you have no games running)
+	- Command `spinupProxy`
+		- ... (similar to `spinupMinigame` but for a proxy.)
+	- Command `spindownProxy`
+		- ... (similar to `spindownMinigame` but for a proxy.)
+	- Command `extendProxy`
+		- ... (similar to `extendMinigame` but for a proxy.)
+	- Command `timerProxy`
+		- ... (similar to `timerMinigame` but for a proxy.)
+	- Command `listProxies`
+		- ... (similar to `listMinigame` but for a proxy.)
+
+
+
+[php example]: https://cp.creeperhost.net/Aries/
+[ch wiki]: http://wiki.creeperlabs.com/index.php/ElasticCreeper_API

@@ -85,6 +85,10 @@ Commands
 			- `config` Array of Objects, each of which has the following properties:
 				- `key` String with a key used identify a config entry.
 				- `value` A value of probably any type that is stored at the given `key`.
+	- Command `setConfig` sets a config value.  Note that this is mostly for internal use and isn't so useful outside of CH.  Use of `getConfig`/`setConfig` is doable, but does not seem openly supported as of writing, and use is not recommended.
+		- Data object takes the following additional properties:
+			- `key` String key used to identify this config entry.  Should be namespaced using colons, EG `litepanel:option` or `narfpanel:foo`, `narfpanel:bar`, etc.
+		- **No** Additional properties on success response.
 	- Command `listservices` gets a list of services which are currently active.
 		- Data object takes no additional properties for this command.
 		- Additional properties on success response:

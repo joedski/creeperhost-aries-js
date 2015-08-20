@@ -27,6 +27,9 @@ addCompleteListener = ( requestStream, listenerCallback ) ->
 		responseData = if rawResponseData? then (try JSON.parse rawResponseData catch e then null) else null
 		listenerCallback responseData, response, rawResponseData
 
+	# No provisions for timeouts...
+	# Do this by calling requestStream.setTimeout with some time like 30*1000 and the timeout callback.
+	# How to check for a network error?  (EG cannot connect because something like network is not connected to internet...)
 	requestStream.on 'response', ( response ) ->
 		response.on 'data', appendData
 		response.on 'end', -> emitData response

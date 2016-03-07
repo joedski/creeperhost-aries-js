@@ -11,7 +11,8 @@
     "url": "https://github.com/joedski/creeperhost-aries-js.git"
   },
   "scripts": {
-    "prepublish": "cake build",
+    "prepublish": "npm run prepublish",
+    "build": "cake build",
     "test": "cake build"
   },
   "keywords": [

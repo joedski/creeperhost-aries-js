@@ -1,7 +1,7 @@
 CreeperHost Aries API for Node JS
 =================================
 
-> Note: Due to not actually setting the version to 0 before publishing, the 1.x versions are being treated as the unstable version.  Sorry about that.
+> Note: v1.x did not pass errors to the user-provided callback.  v2 now passes the error or null as the first argument.
 
 This is a simple port of [CreeperHost][1]'s [Aries API][2] to Node JS or IO JS.  It's useful if you're writing a Node based CreeperHost frontend or [NW.js][4] app.
 
@@ -44,7 +44,7 @@ Basic usage is largely similar to their normal API, but dealing with the respons
 - `exec( section :string, command :string, data :Object = {}, [ callback :Function ] ) :http.ClientRequest`
 	- Generates a request and sends it to CreeperHost's server, returning the request object so you can listen to it.  For the most part, you'll just listen for a 'response' event, though you should probably handle timeouts and such as well.
 	- If a callback is passed as the last argument then exec will automatically listen for the response to arrive, slurp the data together, and call the callback with that response and its data in the following form:
-		- `callback( error :?Error, parsedResponse :Object | Null, responseStream :http.IncomingMessage, rawResponse :string )`
+		- `callback( error :?Error, parsedResponse :?object, responseStream :?http.IncomingMessage, rawResponse :?string )`
 			- `error` - An error if one is encountered when sending the Request.  Does not count HTTP Server Errors (status codes less than 200 or greater than or equal to 400) nor API errors (`apiResponse.status != 'success'`)
 			- `parsedResponse` - If the response is formatted as JSON, this will be the object parsed from that formatted string, otherwise it will be `null`.
 			- `responseStream` - This is the message stream representing the response from CreeperHost's server.  It is useful for checking the response statusCode among other things, although is probably safely ignored most of the time.

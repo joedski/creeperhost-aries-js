@@ -61,9 +61,9 @@ module.exports = class Aries
 
 		callback = callback or ->;
 		postData = @getPostData data
-		url = @getPostRequestOptions service, command, postData
+		requestOptions = @getPostRequestOptions service, command, postData
 
-		request = https.request urlOpts
+		request = https.request requestOptions
 		request.write postData
 		request.end()
 

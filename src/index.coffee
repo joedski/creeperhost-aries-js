@@ -18,27 +18,37 @@ The cURL request had the following options:
 - CURLOPT_POSTFIELDS = fieldsString
 ###
 
-addCompleteListener = ( requestStream, listenerCallback ) ->
-	rawResponseData = ''
-
-	appendData = ( chunk ) -> rawResponseData += chunk
-
-	emitData = ( response ) ->
-		responseData = if rawResponseData? then (try JSON.parse rawResponseData catch e then null) else null
-		listenerCallback responseData, response, rawResponseData
-
-	# No provisions for timeouts...
-	# Do this by calling requestStream.setTimeout with some time like 30*1000 and the timeout callback.
-	# How to check for a network error?  (EG cannot connect because something like network is not connected to internet...)
-	requestStream.on 'response', ( response ) ->
-		response.on 'data', appendData
-		response.on 'end', -> emitData response
-
-	requestStream
-
 module.exports = class Aries
+	@ERROR_HTTP: 'ERROR_HTTP'
+	@ERROR_API: 'ERROR_API'
+
 	key: null
 	secret: null
+
+	# Convenience wrapper to convert non-OK HTTP statuses to errors.
+	@wrapCommonErrors: ( callback ) ->
+		( error, responseData, response, rawResponseData ) ->
+			if error?
+				callback error
+			else if not (200 <= (Number response.statusCode) < 400)
+				error = new Error( "Received non-OK statusCode #{ response.statusCode }" )
+				error.apiErrorType = Aries.ERROR_HTTP
+				error.apiResponse = response
+				error.apiResponseStatusCode = Number response.statusCode
+
+				callback error, responseData, response, rawResponseData
+			else if responseData.status != 'success'
+				error = new Error( "API call to '#{ response.ariesMeta.service }/#{ response.ariesMeta.command }' returned non-success status: #{ responseData.message }" )
+				error.apiErrorType = Aries.ERROR_API
+				error.apiResponseData = responseData
+				error.apiResponseStatus = responseData.status
+				error.apiResponseMessage = responseData.message
+				error.apiResponseCode = responseData.code
+
+				callback error, responseData, response, rawResponseData
+			else
+				callback null, responseData, response, rawResponseData
+
 
 	constructor: ( @key, @secret ) ->
 		# Nothing else, really...
@@ -49,10 +59,31 @@ module.exports = class Aries
 			callback = data
 			data = {}
 
+		callback = callback or ->;
 		postData = @getPostData data
 		url = @getPostRequestOptions service, command, postData
-		request = @execRequest url, postData
-		if callback? then addCompleteListener request, callback else request
+
+		request = https.request urlOpts
+		request.write postData
+		request.end()
+
+		request.on 'error', ( error ) ->
+			callback error
+
+		request.on 'response', do =>
+			rawResponseData = ''
+			( response ) =>
+				response.ariesMeta =
+					service: service
+					command: command
+					data: data
+					key: @key
+					secret: @secret
+				response.setEncoding 'utf8'
+				response.on 'data', ( data ) -> rawResponseData += data
+				response.on 'end', ->
+					responseData = if rawResponseData? then (try JSON.parse rawResponseData catch e then null) else null
+					callback null, responseData, response, rawResponseData
 
 	getPostData: ( data ) ->
 		fields =
@@ -72,9 +103,3 @@ module.exports = class Aries
 			'Content-Type': 'application/x-www-form-urlencoded'
 			'Content-Length': Buffer.byteLength postData, 'utf8'
 		rejectUnauthorized: false # covers CURLOPT_SSL_VERIFYPEER and CURLOPT_SSL_VERIFYHOST.
-
-	execRequest: ( urlOpts, postData ) ->
-		request = https.request urlOpts
-		request.write postData
-		request.end()
-		request

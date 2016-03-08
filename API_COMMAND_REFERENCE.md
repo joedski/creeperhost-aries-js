@@ -93,7 +93,7 @@ Commands
 		- `services` Object whose properties each represent a service, the property name being that service's ID.  For instance, to get the `csgo` service's info, you'd access `response.services.csgo`.  Each such service object has the following properties:
 			- `id` The id of this service; the same as the property name it's attached to on the `services` value.
 			- `active` Boolean indicating whether or not the service is currently active on your account.
-			- `Icon` (uppercase `I`) `data:` URI with the icon image for that service.
+			- `Icon` (uppercase `I`) data-URI with the icon image for that service.
 			- `displayDescriptios` String with a description of the service.
 			- `displayName` String with the name of the service.
 			- `displayVersion` String with the version of the service.  Typical values include `"Release"`, `"Beta"`, and so on.
@@ -199,7 +199,7 @@ Use of these commands was observed in CreeperHost's own panel.  Use at your own 
 	- Response Values on Success
 		- `services` Object whose properties each represent a service, the property name being that service's ID.  For instance, to get the `csgo` service's info, you'd access `response.services.csgo`.  Each such service object has the following properties:
 			- `id` The id of this service; the same as the property name it's attached to on the `services` value.
-			- `Icon` (uppercase `I`) `data:` URI with the icon image for that service.
+			- `Icon` (uppercase `I`) data-URI with the icon image for that service.
 			- `displayDescriptios` String with a description of the service.
 			- `displayName` String with the name of the service.
 			- `displayVersion` String with the version of the service.  Typical values include `"Release"`, `"Beta"`, and so on.

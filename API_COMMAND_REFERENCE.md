@@ -80,8 +80,8 @@ Commands
 - `os/gethdd`
 	- No additional parameters.
 	- Response Values on Success
-		- `free` String or Number, the amount of HD Space still free, expressed in (unit?).
-		- `used` String or Number, the amount of HD Space currently used, expressed in (unit?).
+		- `free` String or Number, the amount of HD Space still free, expressed in kilobytes.
+		- `used` String or Number, the amount of HD Space currently used, expressed in kilobytes.
 - `os/getcpu`
 	- No additional parameters.
 	- Response Values on Success
@@ -150,6 +150,39 @@ Undocumented Commands
 
 Use of these commands was observed in CreeperHost's own panel.  Use at your own risk.  (Risk can include messing up your CH account or causing things they cannot/will not help you with!)
 
+- `minecraft/currentinstance` gets the MC instance which all `minecraft/` scoped API comands will refer to.
+	- No additional parameters.
+	- Response Values on Success
+		- Note: does not have `status` property.  Curious.
+		- `argType` String indicating something, probably the desired server performance tuning.  Usually `"balanced"`.
+		- `displayName` String indicating the name to show to the User.
+		- `id` String indicating the id of this instance.
+		- `jar` String indicating ... something about the Minecraft server JAR.  Usually `"Auto-Detect"`.
+		- `memory` String indicating how to budget the memory this instance can use.  Usually `"adaptive"`.
+		- `path` String indicating where on your VM the server is located.  The default instance that CreeperHost initially creates has a path of `/home/minecraft/`.
+		- `port` Optional String or Number indicating what port number the MC server is using, if different from the default.  Default is `null`.
+- `minecraft/listinstance`
+	- No additional parameters.
+	- Response Values on Success
+		- `age` Number indicating the age of something.
+		- `instances` Array of Objects with the following properties:
+			- `id` String with the id of the instance.
+			- `displayName` String with the name to show the user.
+			- `jar` String indicating something about the JAR.  Usually `"Auto-Detect"`.
+			- `memory` String indicating how to budget memory for this instance.  Default is probably `"adaptive"`, but in such cases it may end up coming as `null'.
+			- `path` String indicating where on your VM the server is located.  The default instance that CreeperHost initially creates has a path of `/home/minecraft/`.
+			- `port` Optional String or Number indicating what port number the MC server is using, if different from the default.  Default is `null`.
+- `minecraft/setinstance`
+	- Parameters
+		- `id` String with the id of the desired instance to inspect.
+	- Response Values on Success
+		- `instance` Object with the following properties:
+			- `id` String with the id of the instance.
+			- `displayName` String with the name to show the user.
+			- `jar` String indicating something about the JAR.  Usually `"Auto-Detect"`.
+			- `memory` String indicating how to budget memory for this instance.  Default is probably `"adaptive"`, but in such cases it may end up coming as `null'.
+			- `path` String indicating where on your VM the server is located.  The default instance that CreeperHost initially creates has a path of `/home/minecraft/`.
+			- `port` Optional String or Number indicating what port number the MC server is using, if different from the default.  Default is `null`.
 - `os/getConfig` gets miscellaneous CreeperHost related configuration.  Use of this command is not recommended.
 	- No additional parameters.
 	- Response Values on Success
